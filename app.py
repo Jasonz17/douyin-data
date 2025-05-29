@@ -43,7 +43,7 @@ def get_single_video_url():
     browser = None
     try:
         # 单个视频解析：无头模式，不保存用户数据
-        co = ChromiumOptions().headless()
+        co = ChromiumOptions()
         # Docker 运行环境相关的参数
         co.set_argument('--no-sandbox')
         co.set_argument('--disable-dev-shm-usage')
@@ -142,7 +142,7 @@ def get_user_videos():
 
     try:
         # 用户主页采集：使用持久化配置，并设置为无头模式
-        # 注意：这里直接在 drission_co_persistent 实例上设置 headless() 和 argument
+        # 注意：这里直接在 drission_co_persistent 
         # 确保它既能持久化数据，又能无头运行
         
         drission_co_persistent.set_argument('--no-sandbox')
