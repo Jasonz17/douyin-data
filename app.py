@@ -144,7 +144,7 @@ def get_user_videos():
         # 用户主页采集：使用持久化配置，并设置为无头模式
         # 注意：这里直接在 drission_co_persistent 实例上设置 headless() 和 argument
         # 确保它既能持久化数据，又能无头运行
-        drission_co_persistent.headless() # 设置为无头模式
+        
         drission_co_persistent.set_argument('--no-sandbox')
         drission_co_persistent.set_argument('--disable-dev-shm-usage')
         drission_co_persistent.set_argument('--disable-gpu')
