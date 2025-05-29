@@ -2,28 +2,26 @@ from flask import Flask, request, jsonify, render_template
 from DrissionPage import ChromiumPage, ChromiumOptions
 from urllib.parse import urlparse, parse_qs
 import json
-import os
+import os # 仍然需要 os 模块，但不再用于 os.makedirs
 
 app = Flask(__name__)
 
 # --- Configuration for DrissionPage ---
-# 这个路径现在专门用于 get_user_videos 函数，它需要持久化数据
-# 这里的路径 '/app/drission_user_data' 是容器内部的路径。
-# 在 Dockerfile 中，我们将定义它，并在 docker run 命令中将宿主机目录映射到此。
+# 这个路径现在只存在于容器内部。
+# 在 Dockerfile 中，我们将确保这个目录是可写的。
 user_data_dir = '/app/drission_user_data'
 
-# 为了确保这个目录在容器启动时就存在（尽管 Docker 卷通常会自动创建），
-# 但明确创建可以避免一些潜在问题。
-# 在 Flask 应用启动时就尝试创建这个目录
-os.makedirs(user_data_dir, exist_ok=True)
-print(f"已确保 DrissionPage 用户数据目录存在: {user_data_dir}")
+# 移除这行，因为我们不再需要在 app.py 启动时创建目录，
+# 目录会在 Dockerfile 中由 root 用户创建和设置权限。
+# os.makedirs(user_data_dir, exist_ok=True)
+# print(f"已确保 DrissionPage 用户数据目录存在: {user_data_dir}")
+
 
 # ChromiumOptions 实例，用于需要持久化用户数据的场景 (get_user_videos)
-# 注意：这里不设置 headless()，让它可以在需要时通过参数控制是否无头
-# 并且不设置 --no-sandbox 等参数，这些参数将在 ChromiumPage 实例创建时传递
 drission_co_persistent = ChromiumOptions()
 drission_co_persistent.set_user_data_path(user_data_dir)
 # --- End DrissionPage Configuration ---
+
 
 @app.route('/')
 def index():
