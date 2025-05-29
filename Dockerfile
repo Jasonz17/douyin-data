@@ -28,7 +28,6 @@ RUN apt-get update && apt-get install -y \
     libgbm1 \
     libxss1 \
     libnss3 \
-    # 清理apt缓存以减小镜像大小
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
@@ -44,14 +43,15 @@ COPY . .
 # 暴露端口
 EXPOSE 8000
 
-# 创建非root用户（可选，增加安全性）
+# 创建非root用户
 RUN useradd -m -u 1000 appuser
 
-# 在切换用户之前，创建并设置持久化数据目录的所有权和权限
-# 这个目录与 app.py 中 user_data_dir = '/app/drission_user_data' 对应
+# --- 关键修改：在这里创建并设置 drission_user_data 目录的权限 ---
+# 确保目录被创建，并将其所有权赋给 appuser
+# 这个目录只存在于容器内部文件系统
 RUN mkdir -p /app/drission_user_data \
     && chown -R appuser:appuser /app/drission_user_data \
-    && chmod 755 /app/drission_user_data # 赋予 appuser 读写执行权限，其他用户只读执行
+    && chmod -R 777 /app/drission_user_data # 给予 appuser 完全的读写执行权限
 
 USER appuser
 
